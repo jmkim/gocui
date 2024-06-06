@@ -838,7 +838,7 @@ func (v *View) parseInput(ch rune, x int, _ int) (bool, []cell) {
 			for _, cell := range v.lines[v.wy][0:v.wx] {
 				cx += runewidth.RuneWidth(cell.chr)
 			}
-			repeatCount = v.InnerWidth() - cx
+			repeatCount = v.InnerWidth() - cx + 1
 			ch = ' '
 			truncateLine = true
 		} else if isEscape {
