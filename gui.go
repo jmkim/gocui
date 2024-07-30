@@ -751,13 +751,20 @@ func (g *Gui) MainLoop() error {
 		}
 	}()
 
-	if g.Mouse {
-		Screen.EnableMouse()
-	}
-
 	Screen.EnableFocus()
 
+	previousEnableMouse := false
 	for {
+		if g.Mouse != previousEnableMouse {
+			if g.Mouse {
+				Screen.EnableMouse()
+			} else {
+				Screen.DisableMouse()
+			}
+
+			previousEnableMouse = g.Mouse
+		}
+
 		err := g.processEvent()
 		if err != nil {
 			return err
