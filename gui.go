@@ -1084,7 +1084,7 @@ func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
 		if i >= currentTabStart && i <= currentTabEnd {
 			currentFgColor = v.SelFgColor
 			if v != g.currentView {
-				currentFgColor -= AttrBold
+				currentFgColor &= ^AttrBold
 			}
 		}
 		if err := g.SetRune(x, v.y0, ch, currentFgColor, currentBgColor); err != nil {
