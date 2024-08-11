@@ -784,14 +784,13 @@ func (v *View) writeRunes(p []rune) {
 			}
 			v.wx = 0
 		default:
-			truncateLine, cells := v.parseInput(r, v.wx, v.wy)
+			moveCursor, cells := v.parseInput(r, v.wx, v.wy)
 			if cells == nil {
 				continue
 			}
 			v.writeCells(v.wx, v.wy, cells)
-			v.wx += len(cells)
-			if truncateLine {
-				v.lines[v.wy] = v.lines[v.wy][:v.wx]
+			if moveCursor {
+				v.wx += len(cells)
 			}
 		}
 	}
@@ -814,7 +813,7 @@ func (v *View) writeString(s string) {
 // contains the processed data.
 func (v *View) parseInput(ch rune, x int, _ int) (bool, []cell) {
 	cells := []cell{}
-	truncateLine := false
+	moveCursor := true
 
 	isEscape, err := v.ei.parseOne(ch)
 	if err != nil {
@@ -830,13 +829,18 @@ func (v *View) parseInput(ch rune, x int, _ int) (bool, []cell) {
 	} else {
 		repeatCount := 1
 		if _, ok := v.ei.instruction.(eraseInLineFromCursor); ok {
-			// truncate line
+			// fill rest of line
 			v.ei.instructionRead()
-			repeatCount = 0
-			truncateLine = true
+			cx := 0
+			for _, cell := range v.lines[v.wy] {
+				cx += runewidth.RuneWidth(cell.chr)
+			}
+			repeatCount = v.InnerWidth() - cx
+			ch = ' '
+			moveCursor = false
 		} else if isEscape {
 			// do not output anything
-			return truncateLine, nil
+			return moveCursor, nil
 		} else if ch == '\t' {
 			// fill tab-sized space
 			const tabStop = 4
@@ -853,7 +857,7 @@ func (v *View) parseInput(ch rune, x int, _ int) (bool, []cell) {
 		}
 	}
 
-	return truncateLine, cells
+	return moveCursor, cells
 }
 
 // Read reads data into p from the current reading position set by SetReadPos.
