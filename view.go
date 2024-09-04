@@ -1098,12 +1098,12 @@ func (v *View) IsTainted() bool {
 }
 
 // draw re-draws the view's contents.
-func (v *View) draw() error {
+func (v *View) draw() {
 	v.writeMutex.Lock()
 	defer v.writeMutex.Unlock()
 
 	if !v.Visible {
-		return nil
+		return
 	}
 
 	v.clearRunes()
@@ -1112,7 +1112,7 @@ func (v *View) draw() error {
 
 	if v.Wrap {
 		if maxX == 0 {
-			return nil
+			return
 		}
 		v.ox = 0
 	}
@@ -1125,7 +1125,7 @@ func (v *View) draw() error {
 	}
 
 	if len(v.viewLines) == 0 {
-		return nil
+		return
 	}
 
 	start := v.oy
@@ -1199,7 +1199,6 @@ func (v *View) draw() error {
 			cellIdx++
 		}
 	}
-	return nil
 }
 
 func (v *View) refreshViewLinesIfNeeded() {

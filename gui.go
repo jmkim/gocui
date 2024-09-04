@@ -1204,9 +1204,7 @@ func (g *Gui) ForceRedrawViews(views ...*View) error {
 	}
 
 	for _, v := range views {
-		if err := v.draw(); err != nil {
-			return err
-		}
+		v.draw()
 	}
 
 	Screen.Show()
@@ -1252,9 +1250,7 @@ func (g *Gui) draw(v *View) error {
 		Screen.HideCursor()
 	}
 
-	if err := v.draw(); err != nil {
-		return err
-	}
+	v.draw()
 
 	if v.Frame {
 		var fgColor, bgColor, frameColor Attribute
