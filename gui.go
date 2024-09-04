@@ -325,8 +325,8 @@ func (g *Gui) SetView(name string, x0, y0, x1, y1 int, overlaps byte) (*View, er
 				newViewCursorX, newOriginX := updatedCursorAndOrigin(0, v.InnerWidth(), cursorX)
 				newViewCursorY, newOriginY := updatedCursorAndOrigin(0, v.InnerHeight(), cursorY)
 
-				_ = v.SetCursor(newViewCursorX, newViewCursorY)
-				_ = v.SetOrigin(newOriginX, newOriginY)
+				v.SetCursor(newViewCursorX, newViewCursorY)
+				v.SetOrigin(newOriginX, newOriginY)
 			}
 		}
 
@@ -1356,9 +1356,7 @@ func (g *Gui) onKey(ev *GocuiEvent) error {
 			}
 		}
 		if !IsMouseScrollKey(ev.Key) {
-			if err := v.SetCursor(newCx, newCy); err != nil {
-				return err
-			}
+			v.SetCursor(newCx, newCy)
 			if v.Editable {
 				v.TextArea.SetCursor2D(newX, newY)
 
