@@ -494,31 +494,15 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) {
 		bgColor = v.BgColor
 		ch = v.Mask
 	} else if v.Highlight {
-		var ry, rcy int
-
-		_, ry, ok := v.realPosition(x, y)
-		if !ok {
-			return
-		}
-		_, rrcy, ok := v.realPosition(v.cx, v.cy)
-		// out of bounds is fine
-		if ok {
-			rcy = rrcy
-		}
-
-		rangeSelectStart := rcy
-		rangeSelectEnd := rcy
+		rangeSelectStart := v.cy
+		rangeSelectEnd := v.cy
 		if v.rangeSelectStartY != -1 {
-			_, realRangeSelectStart, ok := v.realPosition(0, v.rangeSelectStartY-v.oy)
-			if !ok {
-				return
-			}
-
-			rangeSelectStart = min(realRangeSelectStart, rcy)
-			rangeSelectEnd = max(realRangeSelectStart, rcy)
+			relativeRangeSelectStart := v.rangeSelectStartY - v.oy
+			rangeSelectStart = min(relativeRangeSelectStart, v.cy)
+			rangeSelectEnd = max(relativeRangeSelectStart, v.cy)
 		}
 
-		if ry >= rangeSelectStart && ry <= rangeSelectEnd {
+		if y >= rangeSelectStart && y <= rangeSelectEnd {
 			// this ensures we use the bright variant of a colour upon highlight
 			fgColorComponent := fgColor & ^AttrAll
 			if fgColorComponent >= AttrIsValidColor && fgColorComponent < AttrIsValidColor+8 {
