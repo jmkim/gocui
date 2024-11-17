@@ -402,8 +402,8 @@ func (l lineType) String() string {
 	return str
 }
 
-// newView returns a new View object.
-func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
+// NewView returns a new View object.
+func NewView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 	v := &View{
 		name:              name,
 		x0:                x0,
