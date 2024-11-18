@@ -221,7 +221,8 @@ func TestLineWrap(t *testing.T) {
 			expected: []string{
 				"one-two-",
 				"three-",
-				"four-five",
+				"four-",
+				"five",
 			},
 		},
 		{

@@ -1518,7 +1518,7 @@ func lineWrap(line []cell, columns int) [][]cell {
 					// if break occurs at hyphen, we'll retain the hyphen
 					lines = append(lines, line[offset:lastWhitespaceIndex+1])
 					offset = lastWhitespaceIndex + 1
-					n = i - offset
+					n = i - offset + 1
 				} else {
 					// if break occurs at space, we'll omit the space
 					lines = append(lines, line[offset:lastWhitespaceIndex])
