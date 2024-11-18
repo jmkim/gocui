@@ -1517,14 +1517,13 @@ func lineWrap(line []cell, columns int) [][]cell {
 				if line[lastWhitespaceIndex].chr == '-' {
 					// if break occurs at hyphen, we'll retain the hyphen
 					lines = append(lines, line[offset:lastWhitespaceIndex+1])
-					offset = lastWhitespaceIndex + 1
-					n = i - offset + 1
 				} else {
 					// if break occurs at space, we'll omit the space
 					lines = append(lines, line[offset:lastWhitespaceIndex])
-					offset = lastWhitespaceIndex + 1
-					n = i - offset + 1
 				}
+				// Either way, continue *after* the break
+				offset = lastWhitespaceIndex + 1
+				n = i - offset + 1
 			} else {
 				// in this case we're breaking mid-word
 				lines = append(lines, line[offset:i])
