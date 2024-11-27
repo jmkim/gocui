@@ -1523,7 +1523,10 @@ func lineWrap(line []cell, columns int) [][]cell {
 				}
 				// Either way, continue *after* the break
 				offset = lastWhitespaceIndex + 1
-				n = i - offset + 1
+				n = 0
+				for _, c := range line[offset : i+1] {
+					n += runewidth.RuneWidth(c.chr)
+				}
 			} else {
 				// in this case we're breaking mid-word
 				lines = append(lines, line[offset:i])
