@@ -1357,6 +1357,8 @@ func (v *View) ViewBufferLines() []string {
 	v.writeMutex.Lock()
 	defer v.writeMutex.Unlock()
 
+	v.refreshViewLinesIfNeeded()
+
 	lines := make([]string, len(v.viewLines))
 	for i, l := range v.viewLines {
 		str := lineType(l.line).String()
