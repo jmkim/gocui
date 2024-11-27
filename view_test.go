@@ -226,6 +226,27 @@ func TestLineWrap(t *testing.T) {
 			},
 		},
 		{
+			name:    "Space in last column",
+			line:    "hello world",
+			columns: 6,
+			expected: []string{
+				/* EXPECTED:
+				"hello",
+				ACTUAL: */
+				"hello ",
+				"world",
+			},
+		},
+		{
+			name:    "Hyphen in last column",
+			line:    "hello-world",
+			columns: 6,
+			expected: []string{
+				"hello-",
+				"world",
+			},
+		},
+		{
 			name:    "English text",
 			line:    "+The sea reach of the Thames stretched before us like the bedinnind of an interminable waterway. In the offind the sea and the sky were welded todether without a joint, and in the luminous space the tanned sails of the bardes drifting blah blah",
 			columns: 81,
