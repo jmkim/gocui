@@ -237,6 +237,23 @@ func TestLineWrap(t *testing.T) {
 			},
 		},
 		{
+			name:    "Multi-cell runes",
+			line:    "🐤🐤🐤 🐝🐝 🙉 🦊🦊🦊-🐬🐬 🦢🦢",
+			columns: 9,
+			expected: []string{
+				/* EXPECTED:
+				"🐤🐤🐤",
+				"🐝🐝 🙉",
+				"🦊🦊🦊-",
+				"🐬🐬 🦢🦢",
+				ACTUAL: */
+				"🐤🐤🐤",
+				"🐝🐝 🙉",
+				"🦊🦊🦊-🐬🐬",
+				"🦢🦢",
+			},
+		},
+		{
 			name:    "Space in last column",
 			line:    "hello world",
 			columns: 6,
