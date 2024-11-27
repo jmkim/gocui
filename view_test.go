@@ -226,6 +226,17 @@ func TestLineWrap(t *testing.T) {
 			},
 		},
 		{
+			name:    "Several lines using all the available width",
+			line:    "aaa bb cc ddd-ee ff",
+			columns: 5,
+			expected: []string{
+				"aaa",
+				"bb cc",
+				"ddd-",
+				"ee ff",
+			},
+		},
+		{
 			name:    "Space in last column",
 			line:    "hello world",
 			columns: 6,
