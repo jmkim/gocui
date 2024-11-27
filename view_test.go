@@ -230,10 +230,7 @@ func TestLineWrap(t *testing.T) {
 			line:    "hello world",
 			columns: 6,
 			expected: []string{
-				/* EXPECTED:
 				"hello",
-				ACTUAL: */
-				"hello ",
 				"world",
 			},
 		},

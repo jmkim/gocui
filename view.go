@@ -1512,7 +1512,7 @@ func lineWrap(line []cell, columns int) [][]cell {
 				lines = append(lines, line[offset:i])
 				offset = i
 				n = rw
-			} else if lastWhitespaceIndex != -1 && lastWhitespaceIndex+1 != i {
+			} else if lastWhitespaceIndex != -1 {
 				// if there is a space in the line and the line is not breaking at a space/hyphen
 				if line[lastWhitespaceIndex].chr == '-' {
 					// if break occurs at hyphen, we'll retain the hyphen
