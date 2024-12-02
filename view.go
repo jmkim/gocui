@@ -1087,6 +1087,8 @@ func (v *View) updateSearchPositions() {
 
 		if v.searcher.modelSearchResults != nil {
 			for _, result := range v.searcher.modelSearchResults {
+				// This code only works when v.Wrap is false.
+
 				if result.Y >= len(v.lines) {
 					break
 				}
@@ -1115,8 +1117,9 @@ func (v *View) updateSearchPositions() {
 				}
 			}
 		} else {
-			for y, line := range v.lines {
-				v.searcher.searchPositions = append(v.searcher.searchPositions, searchPositionsForLine(line, y)...)
+			v.refreshViewLinesIfNeeded()
+			for y, line := range v.viewLines {
+				v.searcher.searchPositions = append(v.searcher.searchPositions, searchPositionsForLine(line.line, y)...)
 			}
 		}
 	}
