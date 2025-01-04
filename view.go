@@ -66,6 +66,11 @@ type View struct {
 	// true and viewLines to nil
 	viewLines []viewLine
 
+	// If the last character written was a newline, we don't write it but
+	// instead set pendingNewline to true. If more text is written, we write the
+	// newline then. This is to avoid having an extra blank at the end of the view.
+	pendingNewline bool
+
 	// writeMutex protects locks the write process
 	writeMutex sync.Mutex
 
@@ -647,6 +652,9 @@ func (v *View) SetWritePos(x, y int) {
 
 	v.wx = x
 	v.wy = y
+
+	// Changing the write position makes a pending newline obsolete
+	v.pendingNewline = false
 }
 
 // WritePos returns the current write position of the view's internal buffer.
@@ -773,7 +781,18 @@ func (v *View) writeRunes(p []rune) {
 		}
 	}
 
-	for _, r := range p {
+	if v.pendingNewline {
+		advanceToNextLine()
+		v.pendingNewline = false
+	}
+
+	until := len(p)
+	if until > 0 && p[until-1] == '\n' {
+		v.pendingNewline = true
+		until--
+	}
+
+	for _, r := range p[:until] {
 		switch r {
 		case '\n':
 			finishLine()
@@ -794,6 +813,10 @@ func (v *View) writeRunes(p []rune) {
 				v.wx += len(cells)
 			}
 		}
+	}
+
+	if v.pendingNewline {
+		finishLine()
 	}
 
 	v.updateSearchPositions()
