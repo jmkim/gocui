@@ -765,15 +765,19 @@ func (v *View) writeRunes(p []rune) {
 		}
 	}
 
+	advanceToNextLine := func() {
+		v.wx = 0
+		v.wy++
+		if v.wy >= len(v.lines) {
+			v.lines = append(v.lines, nil)
+		}
+	}
+
 	for _, r := range p {
 		switch r {
 		case '\n':
 			finishLine()
-			v.wx = 0
-			v.wy++
-			if v.wy >= len(v.lines) {
-				v.lines = append(v.lines, nil)
-			}
+			advanceToNextLine()
 		case '\r':
 			finishLine()
 			v.wx = 0
