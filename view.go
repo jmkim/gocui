@@ -690,7 +690,7 @@ func (v *View) makeWriteable(x, y int) {
 			v.lines = append(v.lines, nil)
 		}
 	}
-	// cell `x` must not be index-able (that's why `<`)
+	// cell `x` need not be index-able (that's why `<`)
 	// append should be used by `lines[y]` user if he wants to write beyond `x`
 	for len(v.lines[y]) < x {
 		if cap(v.lines[y]) > len(v.lines[y]) {
