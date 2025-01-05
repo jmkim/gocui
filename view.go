@@ -762,31 +762,28 @@ func (v *View) writeRunes(p []rune) {
 	// Fill with empty cells, if writing outside current view buffer
 	v.makeWriteable(v.wx, v.wy)
 
+	finishLine := func() {
+		v.autoRenderHyperlinksInCurrentLine()
+		if c, ok := v.readCell(v.wx, v.wy); !ok || c.chr == 0 {
+			v.writeCells(v.wx, v.wy, []cell{{
+				chr:     0,
+				fgColor: 0,
+				bgColor: 0,
+			}})
+		}
+	}
+
 	for _, r := range p {
 		switch r {
 		case '\n':
-			v.autoRenderHyperlinksInCurrentLine()
-			if c, ok := v.readCell(v.wx, v.wy); !ok || c.chr == 0 {
-				v.writeCells(v.wx, v.wy, []cell{{
-					chr:     0,
-					fgColor: 0,
-					bgColor: 0,
-				}})
-			}
+			finishLine()
 			v.wx = 0
 			v.wy++
 			if v.wy >= len(v.lines) {
 				v.lines = append(v.lines, nil)
 			}
 		case '\r':
-			v.autoRenderHyperlinksInCurrentLine()
-			if c, ok := v.readCell(v.wx, v.wy); !ok || c.chr == 0 {
-				v.writeCells(v.wx, v.wy, []cell{{
-					chr:     0,
-					fgColor: 0,
-					bgColor: 0,
-				}})
-			}
+			finishLine()
 			v.wx = 0
 		default:
 			truncateLine, cells := v.parseInput(r, v.wx, v.wy)
