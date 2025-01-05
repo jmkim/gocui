@@ -766,7 +766,7 @@ func (v *View) writeRunes(p []rune) {
 		switch r {
 		case '\n':
 			v.autoRenderHyperlinksInCurrentLine()
-			if c, ok := v.readCell(v.wx+1, v.wy); !ok || c.chr == 0 {
+			if c, ok := v.readCell(v.wx, v.wy); !ok || c.chr == 0 {
 				v.writeCells(v.wx, v.wy, []cell{{
 					chr:     0,
 					fgColor: 0,

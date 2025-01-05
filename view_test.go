@@ -39,10 +39,7 @@ func TestWriteRunes(t *testing.T) {
 		{
 			[]string{"ab"},
 			"1\n",
-			/* EXPECTED:
 			[]string{"1b", ""},
-			ACTUAL: */
-			[]string{"1\x00", ""},
 		},
 		{
 			[]string{"abc"},
