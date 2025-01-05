@@ -10,6 +10,86 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestWriteRunes(t *testing.T) {
+	tests := []struct {
+		existingLines []string
+		stringToWrite string
+		expectedLines []string
+	}{
+		{
+			[]string{},
+			"",
+			[]string{""},
+		},
+		{
+			[]string{},
+			"1\n",
+			[]string{"1\x00", ""},
+		},
+		{
+			[]string{"a"},
+			"1\n",
+			[]string{"1\x00", ""},
+		},
+		{
+			[]string{"a\x00"},
+			"1\n",
+			[]string{"1\x00", ""},
+		},
+		{
+			[]string{"ab"},
+			"1\n",
+			/* EXPECTED:
+			[]string{"1b", ""},
+			ACTUAL: */
+			[]string{"1\x00", ""},
+		},
+		{
+			[]string{"abc"},
+			"1\n",
+			[]string{"1bc", ""},
+		},
+		{
+			[]string{},
+			"1\r",
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"a"},
+			"1\r",
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"a\x00"},
+			"1\r",
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"ab"},
+			"1\r",
+			[]string{"1b"},
+		},
+		{
+			[]string{"abc"},
+			"1\r",
+			[]string{"1bc"},
+		},
+	}
+
+	for _, test := range tests {
+		v := NewView("name", 0, 0, 10, 10, OutputNormal)
+		for _, l := range test.existingLines {
+			v.lines = append(v.lines, stringToCells(l))
+		}
+		v.writeRunes([]rune(test.stringToWrite))
+		var resultingLines []string
+		for _, l := range v.lines {
+			resultingLines = append(resultingLines, cellsToString(l))
+		}
+		assert.Equal(t, test.expectedLines, resultingLines)
+	}
+}
+
 func TestUpdatedCursorAndOrigin(t *testing.T) {
 	tests := []struct {
 		prevOrigin     int
