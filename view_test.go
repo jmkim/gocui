@@ -12,63 +12,68 @@ import (
 
 func TestWriteRunes(t *testing.T) {
 	tests := []struct {
-		existingLines []string
-		stringToWrite string
-		expectedLines []string
+		existingLines  []string
+		stringsToWrite []string
+		expectedLines  []string
 	}{
 		{
 			[]string{},
-			"",
+			[]string{""},
 			[]string{""},
 		},
 		{
 			[]string{},
-			"1\n",
-			[]string{"1\x00", ""},
-		},
-		{
-			[]string{"a"},
-			"1\n",
-			[]string{"1\x00", ""},
-		},
-		{
-			[]string{"a\x00"},
-			"1\n",
-			[]string{"1\x00", ""},
-		},
-		{
-			[]string{"ab"},
-			"1\n",
-			[]string{"1b", ""},
-		},
-		{
-			[]string{"abc"},
-			"1\n",
-			[]string{"1bc", ""},
+			[]string{"1\n"},
+			[]string{"1\x00"},
 		},
 		{
 			[]string{},
-			"1\r",
-			[]string{"1\x00"},
+			[]string{"1\n", "2\n"},
+			[]string{"1\x00", "2\x00"},
 		},
 		{
 			[]string{"a"},
-			"1\r",
+			[]string{"1\n"},
 			[]string{"1\x00"},
 		},
 		{
 			[]string{"a\x00"},
-			"1\r",
+			[]string{"1\n"},
 			[]string{"1\x00"},
 		},
 		{
 			[]string{"ab"},
-			"1\r",
+			[]string{"1\n"},
 			[]string{"1b"},
 		},
 		{
 			[]string{"abc"},
-			"1\r",
+			[]string{"1\n"},
+			[]string{"1bc"},
+		},
+		{
+			[]string{},
+			[]string{"1\r"},
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"a"},
+			[]string{"1\r"},
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"a\x00"},
+			[]string{"1\r"},
+			[]string{"1\x00"},
+		},
+		{
+			[]string{"ab"},
+			[]string{"1\r"},
+			[]string{"1b"},
+		},
+		{
+			[]string{"abc"},
+			[]string{"1\r"},
 			[]string{"1bc"},
 		},
 	}
@@ -78,7 +83,9 @@ func TestWriteRunes(t *testing.T) {
 		for _, l := range test.existingLines {
 			v.lines = append(v.lines, stringToCells(l))
 		}
-		v.writeRunes([]rune(test.stringToWrite))
+		for _, s := range test.stringsToWrite {
+			v.writeRunes([]rune(s))
+		}
 		var resultingLines []string
 		for _, l := range v.lines {
 			resultingLines = append(resultingLines, cellsToString(l))
