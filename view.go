@@ -690,7 +690,7 @@ func (v *View) makeWriteable(x, y int) {
 			v.lines = append(v.lines, nil)
 		}
 	}
-	// cell `x` must not be index-able (that's why `<`)
+	// cell `x` need not be index-able (that's why `<`)
 	// append should be used by `lines[y]` user if he wants to write beyond `x`
 	for len(v.lines[y]) < x {
 		if cap(v.lines[y]) > len(v.lines[y]) {
@@ -726,14 +726,6 @@ func (v *View) writeCells(x, y int, cells []cell) {
 	v.lines[y] = line[:newLen]
 }
 
-// readCell gets cell at specified location (x, y)
-func (v *View) readCell(x, y int) (cell, bool) {
-	if y < 0 || y >= len(v.lines) || x < 0 || x >= len(v.lines[y]) {
-		return cell{}, false
-	}
-	return v.lines[y][x], true
-}
-
 // Write appends a byte slice into the view's internal buffer. Because
 // View implements the io.Writer interface, it can be passed as parameter
 // of functions like fmt.Fprintf, fmt.Fprintln, io.Copy, etc. Clear must
@@ -762,31 +754,28 @@ func (v *View) writeRunes(p []rune) {
 	// Fill with empty cells, if writing outside current view buffer
 	v.makeWriteable(v.wx, v.wy)
 
+	finishLine := func() {
+		v.autoRenderHyperlinksInCurrentLine()
+		if v.wx >= len(v.lines[v.wy]) {
+			v.writeCells(v.wx, v.wy, []cell{{
+				chr:     0,
+				fgColor: 0,
+				bgColor: 0,
+			}})
+		}
+	}
+
 	for _, r := range p {
 		switch r {
 		case '\n':
-			v.autoRenderHyperlinksInCurrentLine()
-			if c, ok := v.readCell(v.wx+1, v.wy); !ok || c.chr == 0 {
-				v.writeCells(v.wx, v.wy, []cell{{
-					chr:     0,
-					fgColor: 0,
-					bgColor: 0,
-				}})
-			}
+			finishLine()
 			v.wx = 0
 			v.wy++
 			if v.wy >= len(v.lines) {
 				v.lines = append(v.lines, nil)
 			}
 		case '\r':
-			v.autoRenderHyperlinksInCurrentLine()
-			if c, ok := v.readCell(v.wx, v.wy); !ok || c.chr == 0 {
-				v.writeCells(v.wx, v.wy, []cell{{
-					chr:     0,
-					fgColor: 0,
-					bgColor: 0,
-				}})
-			}
+			finishLine()
 			v.wx = 0
 		default:
 			truncateLine, cells := v.parseInput(r, v.wx, v.wy)
