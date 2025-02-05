@@ -1311,6 +1311,20 @@ func (g *Gui) onKey(ev *GocuiEvent) error {
 	switch ev.Type {
 	case eventKey:
 
+		// When pasting text in Ghostty, it sends us '\r' instead of '\n' for
+		// newlines. I actually don't quite understand why, because from reading
+		// Ghostty's source code (e.g.
+		// https://github.com/ghostty-org/ghostty/commit/010338354a0) it does
+		// this conversion only for non-bracketed paste mode, but I'm seeing it
+		// in bracketed paste mode. Whatever I'm missing here, converting '\r'
+		// back to '\n' fixes pasting multi-line text from Ghostty, and doesn't
+		// seem harmful for other terminal emulators.
+		//
+		// KeyCtrlJ (int value 10) is '\r', and KeyCtrlM (int value 13) is '\n'.
+		if g.IsPasting && ev.Key == KeyCtrlJ {
+			ev.Key = KeyCtrlM
+		}
+
 		err := g.execKeybindings(g.currentView, ev)
 		if err != nil {
 			return err
